@@ -1,0 +1,6 @@
+.container .wrapper-chat 
+{height: 50vh;
+overflow: scroll;
+overflow-x: unset;
+
+border: solid 0.5px;}

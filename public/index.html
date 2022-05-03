@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choriweb Test</title>
+    <style>
+         
+.container .wrapper-chat{
+    height: 40vh;
+    overflow: scroll;
+    overflow-x: unset;
+    border: solid 0.5px;
+}
+.container .siging {
+    display: flex;
+    
+    justify-content: center;
+}
+body {
+    width: 100vw;
+    height: 100vh;
+    background-image: url("img/photo-1608249889684-e91ddbdd47cf.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.container h1{
+    text-align: center;
+}
+.container p{
+    text-align: center;
+}
+.container li {
+    background-color: gainsboro;;
+}
+.container label{
+    color: floralwhite;
+}
+.container .form-control-plaintext{
+    color: #3ae7e7;
+    border-color: #3ae7e7;
+}
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                 <h1 id="titulo">TOTTIAPP</h1>
+                   <p id="descripcion">chat con log de Google</p>
+                     <div class="wrapper-chat">
+                       <ul id="chat" class="list-group"></ul> 
+                     </div>  
+                     <br/> <br/>
+                     <div class="chatAction" style="display:none" id="chatAction">
+                     <div class="mb-3 row">
+                         <label for="stacticEmail" class="col-sm-2 col-form-label">Usuario</label>
+                   <div class="col-sm10">
+                       <input type="text" readonly class="form-control-plaintext" id="nombreUsuario">
+                   </div> 
+                     </div> 
+                     <div class="mb-3 row">
+                         <label for="mensaje" class="col-sm-2 col-form-label">Mensaje</label>
+                     
+                     <div class="col-md-10"></div>
+                         <input type="text" class="Form-control" id="mensaje">
+                     
+                     <div class="col-md-10"></div>
+                     <br/>
+                     <button type="button" class="btn btn-outline-danger" id="pp" >Enviar</button>
+                     <br><br>
+                     <button type="button" class="btn btn-outline-info" id="salir" >salir</button>
+                      
+                    </div>
+                 </div>
+                 <div class="siging" id="logGoo">
+                 <img src="./img/p6ckkwxkxi8zd03ja8h0.webp" alt="" style="width: 100px;" id="login">
+                 </div> 
+            </div>
+        </div>
+    </div>
+    
+     
+    
+               
+               
+   
+    <script type="module">
+    
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+        import { getDatabase, ref , onValue,onChildAdded,onChildChanged,onChildRemoved,query,orderByChild,set,push } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBlojHVS5Ga2J4fAdliR3RQKJY3Al8X9oM",
+          authDomain: "choriweb-5245c.firebaseapp.com",
+          databaseURL: "https://choriweb-5245c-default-rtdb.firebaseio.com",
+          projectId: "choriweb-5245c",
+          storageBucket: "choriweb-5245c.appspot.com",
+          messagingSenderId: "96453468937",
+          appId: "1:96453468937:web:992e2b4e6c5d3bb4bee9d8",
+          measurementId: "G-54ZYCSL0LD"
+        };
+        import { getAuth, signInWithPopup, GoogleAuthProvider,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        let db = getDatabase()
+        //REFERENCIAS
+        const refTextos = ref(db, "textos/")
+        const refMensaje = ref(db, "mensaje/")
+        //QUERYS
+        const queryMensajes = query(refMensaje)
+        const queryMsgByChild = query(refMensaje,orderByChild("fecha/"))
+        //ORDENANDO POR AUTOR
+        // const queryMsgByChild = query(refMensaje,orderByChild("autor/"))
+         
+        let salir = document.getElementById("salir")
+
+        
+        
+        let pp = document.getElementById("pp").addEventListener("click",()=>{
+            trameData()
+        })
+        
+        
+
+                
+           
+        //  let data= ""
+        //  onValue(refTextos, (snap)=>{
+        //       let data = snap.val()
+        //       console.log("onValue",data)
+        //       Titulo.innerHTML = data.titulo
+        //       Descripcion.innerHTML = data.descripcion
+        //       data = data
+        //        ;})       
+        //  onChildAdded(refTextos,(snap)=>{
+        //       let data = snap.val();
+        //       console.log("onChildAdded",data)
+        //   })  
+        //   onChildChanged(refTextos,(snap)=>{
+        //       let data = snap.val();
+        //       console.log("onChildChanged",data)
+        //   })
+        //   onChildRemoved(refTextos,(snap)=>{
+        //       let data = snap.val();
+        //       let key = snap.key
+        //       console.log("onChildRemoved",data, "key:", key)
+
+        //   })
+
+        //   onChildAdded(queryMensajes,(snap)=>{ 
+        //       let data = snap.val();
+        //       console.log("onChildAdded / refMensajes",data)})
+
+          onValue(refTextos, (snap)=>{
+            let data = snap.val();
+            console.log("queryMensaje",data)
+
+           }) 
+           onChildAdded(queryMsgByChild, (snap)=>{
+            let data = snap.val();
+            let key = snap.key
+            // console.log(key,"queryMsgByChild",data)
+            agregarMsg(data)
+
+           }) 
+           //ORDENAR POR AUTOR (LETRA ABECEDARIO) 
+        //    onChildAdded(queryMsgByChild, (snap)=>{
+        //     let data = snap.val();
+        //     let key = snap.key
+        //     console.log(key,"queryMsgByChild",data)
+
+        //    })       
+                
+        const agregarMsg = (msg)=>{
+            let li_ = document.createElement("li")
+            li_.classList.add("list-group-item");
+           let txt = document.createTextNode(msg.autor+" : "+msg.mensaje)
+            li_.appendChild(txt)
+            li_.setAttribute("id", msg.fecha)
+            chat.appendChild(li_)  
+            document.getElementById(msg.fecha).scrollIntoView({block: "end" , behavior: "smooth"})
+                    
+        }
+        let clicks = document.addEventListener("keyup", function(event){
+            if (event.keyCode ===13) {
+                event.preventDefault()
+                document.getElementById("pp").click();
+            }
+        })
+        const trameData=()=>{
+            var fecha = Date.now()
+            let msg = { autor: nombreUsuario.value,
+            mensaje :   mensaje.value,
+            fecha: fecha
+          } 
+             if (
+            mensaje.value != "") {  push(refMensaje,msg)
+            console.log(msg)
+            mensaje.value = ""
+            } else {
+                alert("complete los campos")
+            }
+             
+          
+         }
+         const auth = getAuth()
+         let login = document.getElementById("login").addEventListener('click', ()=>{
+             loguearUsuario()
+            
+         })
+         const loguearUsuario = ()=>{
+             auth.languageCode = "es"
+             const provider = new GoogleAuthProvider()
+             signInWithPopup(auth, provider).then((result)=>{
+                 let logUser = {
+                     uid : result.user.uid,
+                     username : result.user.displayName,
+                     profile_picture : result.user.photoURL,
+                     email : result.user.email
+                    }
+                    nombreUsuario.value = result.user.displayName
+                    chatAction.style.display = "block";
+                    logGoo.style.display = "none";
+
+                    console.log("logueado:", logUser)
+             })
+   }
+     salir.addEventListener("click",()=>{
+             desloguear()
+         })
+
+      const desloguear = ()=>{
+          signOut(auth).then(()=>{
+                    nombreUsuario.value = ""
+                    chatAction.style.display = "none";
+                    logGoo.style.display = "flex";
+
+          })
+
+      }
+         onAuthStateChanged(auth, (user)=>{
+             if (user) {
+                    nombreUsuario.value = user.displayName
+                    chatAction.style.display = "block";
+                    logGoo.style.display = "none";
+             }else {null}
+         })
+        
+
+         let chatAction = document.getElementById("chatAction") 
+         let logGoo = document.getElementById("logGoo") 
+                          
+        
+ </script>
+     <script> 
+        let Titulo = document.getElementById("titulo");
+        let Descripcion = document.getElementById("descripcion");
+        let Chat = document.getElementById("chat");
+        let nombre =document.getElementById("nombre")
+        let mensaje = document.getElementById("mensaje")
+        let nombreUsuario= document.getElementById("nombreUsuario")      
+        
+     </script>   
+
+        
+       
+    
+
+       
+       
+      
+
+        
+
+        
+      
+      
+      
+</body>
+</html>

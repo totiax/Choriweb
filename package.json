@@ -1,0 +1,19 @@
+{
+  "name": "choriweb",
+  "version": "1.0.0",
+  "description": "esta es unestra primer web con Firebase",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "firebase",
+    "firstapp"
+  ],
+  "author": "Skuarok",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^9.6.10",
+    "sudo": "^1.0.3"
+  }
+}
